@@ -41,21 +41,23 @@ uniform vec3 u_ambientLight;
 
 void main () {
   vec3 normal = normalize(v_normal);
+  
+  float lightIntensity = max(dot(u_lightDirection, normal), 0.0); 
+  float fakeLight = (lightIntensity * 0.6) + 0.4;  
 
   vec3 surfaceToViewDirection = normalize(v_surfaceToView);
   vec3 halfVector = normalize(u_lightDirection + surfaceToViewDirection);
 
-  float fakeLight = dot(u_lightDirection, normal) * .5 + .5;
   float specularLight = clamp(dot(normal, halfVector), 0.0, 1.0);
 
   vec3 effectiveDiffuse = diffuse * v_color.rgb;
   float effectiveOpacity = opacity * v_color.a;
 
   gl_FragColor = vec4(
-      emissive +
-      ambient * u_ambientLight +
-      effectiveDiffuse * fakeLight +
-      specular * pow(specularLight, shininess),
-      effectiveOpacity);
+    emissive + 
+    ambient * u_ambientLight + 
+    effectiveDiffuse * fakeLight +  
+    specular * pow(specularLight, shininess),
+    effectiveOpacity);
 }
 `;

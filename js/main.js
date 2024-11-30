@@ -29,15 +29,15 @@ async function main() {
   const materials = parseMTL(matTexts.join("\n"));
 
   const defaultMaterial = {
-    diffuse: [1, 1, 1],
-    ambient: [0, 0, 0],
-    specular: [1, 1, 1],
-    shininess: 400,
-    opacity: 1,
+    diffuse: [1.0, 0.9, 0.9],
+    ambient: [0.2, 0.2, 0.2],
+    specular: [1.0, 1.0, 1.0],  
+    shininess: 200,            
+    opacity: 1.0,
+    emissive: [0.1, 0.1, 0.1],
   };
 
   const parts = obj.geometries.map(({ material, data }) => {
-
     if (data.color) {
       if (data.position.length === data.color.length) {
         data.color = { numComponents: 3, data: data.color };
@@ -48,7 +48,7 @@ async function main() {
 
     const bufferInfo = webglUtils.createBufferInfoFromArrays(gl, data);
     return {
-      material: materials[material],
+      material: materials[material] || defaultMaterial,
       bufferInfo,
     };
   });
@@ -88,7 +88,8 @@ async function main() {
     const view = m4.inverse(camera);
 
     const sharedUniforms = {
-      u_lightDirection: m4.normalize([-1, 3, 5]),
+      u_lightDirection: m4.normalize([-0.5, 0.5, 1]), 
+      u_ambientLight: [0.3, 0.3, 0.3],                 
       u_view: view,
       u_projection: projection,
       u_viewWorldPosition: cameraPosition,
